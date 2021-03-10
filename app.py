@@ -107,5 +107,7 @@ def move_down(task_id):
         swap_pos(task, oth)
     return HOME
 
+application = app
+
 if __name__ == '__main__':
     app.run()
