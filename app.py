@@ -3,6 +3,8 @@ from flask import render_template
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
 
+from datetime import datetime
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -14,11 +16,13 @@ class Task(db.Model):
     content = db.Column(db.Text)
     done = db.Column(db.Boolean, default=False)
     pos = db.Column(db.Integer, unique=True)
+    created = db.Column(db.DateTime)
 
     def __init__(self, content, pos):
         self.content = content
         self.done = False
         self.pos = pos
+        self.created = datetime.now()
 
     def __repr__(self):
         return '<Content %s>' % self.content
