@@ -10,6 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
+HOME = redirect('/')
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,7 +47,7 @@ def add_task():
     task = Task(content, pos=len(Task.query.all())+1)
     db.session.add(task)
     db.session.commit()
-    return redirect('/')
+    return HOME
 
 
 @app.route('/delete/<int:task_id>')
@@ -59,7 +60,7 @@ def delete_task(task_id):
     for oth in Task.query.filter(Task.pos > pos).all():
         oth.pos -= 1
     db.session.commit()
-    return redirect('/')
+    return HOME
 
 
 @app.route('/done/<int:task_id>')
@@ -74,7 +75,7 @@ def resolve_task(task_id):
         task.done = True
 
     db.session.commit()
-    return redirect('/')
+    return HOME
 
 def swap_pos(task, other):
     pos = task.pos, other.pos
@@ -88,23 +89,23 @@ def swap_pos(task, other):
 def move_up(task_id):
     task = Task.query.get(task_id)
     if not task:
-        return redirect('/')
+        return HOME
 
     oth = Task.query.filter_by(pos=task.pos - 1).first()
     if oth:
         swap_pos(task, oth)
-    return redirect('/')
+    return HOME
 
 @app.route('/down/<int:task_id>')
 def move_down(task_id):
     task = Task.query.get(task_id)
     if not task:
-        return redirect('/')
+        return HOME
 
     oth = Task.query.filter_by(pos=task.pos + 1).first()
     if oth:
         swap_pos(task, oth)
-    return redirect('/')
+    return HOME
 
 if __name__ == '__main__':
     app.run()
