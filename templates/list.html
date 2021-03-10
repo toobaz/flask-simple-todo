@@ -2,16 +2,16 @@
 {% for task in tasks %}
     <li>
         {% if task.done %} <strike> {% endif %}{{ task.content }} ({{ task.created.strftime('%d/%m/%Y %H:%M') }}) {% if task.done %} </strike>{% endif %}
-        <a href="/done/{{ task.id }}">X</a>
-        <a href="/delete/{{ task.id }}">Delete</a>
-        <a href="/up/{{ task.id }}">⮝</a>
-        <a href="/down/{{ task.id }}">⮟</a>
+        <a href="done/{{ task.id }}">X</a>
+        <a href="delete/{{ task.id }}">Delete</a>
+        <a href="up/{{ task.id }}">⮝</a>
+        <a href="down/{{ task.id }}">⮟</a>
     </li>
 {% endfor %}
 </ul>
 
 
-<form action="/task" method="post">
+<form action="task" method="post">
     <p><input type="text" name="content"></p>
     <input type="submit" value="Add task">
 </form>
