@@ -16,8 +16,9 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
     done = db.Column(db.Boolean, default=False)
-    pos = db.Column(db.Integer, unique=True)
+    pos = db.Column(db.Integer)
     created = db.Column(db.DateTime)
+    deleted = db.Column(db.Boolean, default=False)
 
     def __init__(self, content, pos):
         self.content = content
@@ -34,7 +35,7 @@ db.create_all()
 
 @app.route('/')
 def tasks_list():
-    tasks = Task.query.order_by(Task.pos).all()
+    tasks = Task.query.filter_by(deleted=False).order_by(Task.pos).all()
     return render_template('list.html', tasks=tasks)
 
 
@@ -78,11 +79,7 @@ def resolve_task(task_id):
     return HOME
 
 def swap_pos(task, other):
-    pos = task.pos, other.pos
-    # Avoid duplicate pos ( https://stackoverflow.com/q/9109915/2858145 ):
-    task.pos, other.pos = -2, -3
-    db.session.flush()
-    other.pos, task.pos = pos
+    other.pos, task.pos = task.pos, other.pos
     db.session.commit()
 
 @app.route('/up/<int:task_id>')
