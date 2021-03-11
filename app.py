@@ -89,7 +89,7 @@ def move_up(task_id):
     if not task:
         return HOME
 
-    oth = Task.query.filter_by(pos=task.pos - 1).first()
+    oth = Task.query.filter_by(pos=task.pos + 1).first()
     if oth:
         swap_pos(task, oth)
     return HOME
@@ -100,7 +100,7 @@ def move_down(task_id):
     if not task:
         return HOME
 
-    oth = Task.query.filter_by(pos=task.pos + 1).first()
+    oth = Task.query.filter_by(pos=task.pos - 1).first()
     if oth:
         swap_pos(task, oth)
     return HOME
