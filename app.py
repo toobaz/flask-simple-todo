@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask import render_template
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
 
 from datetime import datetime
 
@@ -35,7 +36,7 @@ db.create_all()
 
 @app.route('/')
 def tasks_list():
-    tasks = Task.query.filter_by(deleted=False).order_by(Task.pos).all()
+    tasks = Task.query.filter_by(deleted=False).order_by(desc(Task.pos)).all()
     return render_template('list.html', tasks=tasks)
 
 
