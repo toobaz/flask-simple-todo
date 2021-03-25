@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask import render_template
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import desc
+from sqlalchemy import desc, and_
 
 from datetime import datetime
 
@@ -36,7 +36,9 @@ db.create_all()
 
 @app.route('/')
 def tasks_list():
-    tasks = Task.query.filter_by(deleted=False).order_by(desc(Task.pos)).all()
+    tasks = (Task.query.filter_by(deleted=False)
+                            .order_by(Task.done, desc(Task.pos))
+                            .all())
     return render_template('list.html', tasks=tasks)
 
 
@@ -89,7 +91,9 @@ def move_up(task_id):
     if not task:
         return HOME
 
-    oth = Task.query.filter_by(pos=task.pos + 1).first()
+    oth = (Task.query.filter(and_(Task.pos > task.pos, Task.done == task.done))
+                     .order_by(Task.pos)
+                     .first())
     if oth:
         swap_pos(task, oth)
     return HOME
@@ -100,7 +104,9 @@ def move_down(task_id):
     if not task:
         return HOME
 
-    oth = Task.query.filter_by(pos=task.pos - 1).first()
+    oth = (Task.query.filter(and_(Task.pos < task.pos, Task.done == task.done))
+                     .order_by(desc(Task.pos))
+                     .first())
     if oth:
         swap_pos(task, oth)
     return HOME
