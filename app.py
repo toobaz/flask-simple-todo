@@ -59,7 +59,7 @@ def delete_task(task_id):
     if not task:
         return redirect('/')
     pos = task.pos
-    db.session.delete(task)
+    task.deleted = True
     for oth in Task.query.filter(Task.pos > pos).all():
         oth.pos -= 1
     db.session.commit()
