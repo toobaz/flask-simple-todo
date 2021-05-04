@@ -6,7 +6,7 @@
 <ul>
 {% for task in tasks %}
     <li>
-        {% if task.done %} <strike> {% endif %}{{ task.content }} ({{ task.created.strftime('%d/%m/%Y %H:%M') }}) {% if task.done %} </strike>{% endif %}
+        {% if task.done %} <strike> {% endif %}{{ loop.index0 + 1 }} - {{ task.content }} ({{ task.created.strftime('%d/%m/%Y %H:%M') }}) {% if task.done %} </strike>{% endif %}
         <a href="done/{{ task.id }}">X</a>
         <a href="up/{{ task.id }}">↑</a>
         <a href="down/{{ task.id }}">↓</a>
