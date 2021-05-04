@@ -47,7 +47,27 @@ def add_task():
     if not content:
         return 'Error'
 
-    task = Task(content, pos=len(Task.query.all())+1)
+    todo = Task.query.filter_by(done=False).order_by(-Task.pos)
+    shift = min(int(request.form['shift'])-1, todo.count())
+
+    if shift == 0:
+        task = Task(content, pos=len(Task.query.all())+1)
+    else:
+        last_to_shift = (todo.limit(shift)
+                             # Required for a "limit" followed by a "order_by"
+                             .from_self()
+                             .order_by(Task.pos)
+                             .first())
+
+
+        to_shift = Task.query.filter(Task.pos >= last_to_shift.pos)
+
+        for oth in to_shift:
+            oth.pos += 1
+
+        task = Task(content, pos=to_shift[0].pos - 1)
+
+
     db.session.add(task)
     db.session.commit()
     return HOME
