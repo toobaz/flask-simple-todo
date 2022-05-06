@@ -146,6 +146,31 @@ def move_down(task_id):
 
     return HOME
 
+@app.route('/edit/<int:task_id>')
+def edit_task(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return HOME
+    return render_template('edit.html', task=task)
+
+@app.route('/edit/done/<int:task_id>', methods=['POST'])
+def edited_task(task_id):
+    content = request.form['content']
+    if not content:
+        return 'Error'
+
+    task = Task.query.get(task_id)
+    if not task:
+        return 'Error'
+
+    task.content = content
+
+    db.session.add(task)
+    db.session.commit()
+
+    flash(Markup(f'<b>Task description changed</b> to <em>{task.content}</em>'))
+    return HOME
+
 application = app
 
 if __name__ == '__main__':

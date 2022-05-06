@@ -1,0 +1,29 @@
+<html>
+<head>
+<style>
+.flashes {background-color: powderblue;}
+.flashes>ul {list-style-type: none;}
+</style>
+
+</head>
+
+
+<body>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form action="done/{{ task.id }}" method="post">
+    <input type="text" name="content" value="{{ task.content }}"/>
+    <input type="submit" value="Edit task"/>
+</form>
+
+
+</body>
+</html>
