@@ -1,3 +1,24 @@
+<html>
+<head>
+<style>
+.flashes {background-color: powderblue;}
+.flashes>ul {list-style-type: none;}
+</style>
+
+</head>
+
+
+<body>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
 <form action="task" method="post">
     <p><input type="text" name="shift" size="3" value="1"/> - <input type="text" name="content"/></p>
     <input type="submit" value="Add task"/>
@@ -15,4 +36,5 @@
 </ul>
 
 
-
+</body>
+</html>

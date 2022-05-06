@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, flash, Markup
 from flask import render_template
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -70,6 +70,8 @@ def add_task():
 
     db.session.add(task)
     db.session.commit()
+
+    flash(Markup(f'<b>Added</b> task <em>{task.content}</em>'))
     return HOME
 
 
@@ -78,11 +80,16 @@ def delete_task(task_id):
     task = Task.query.get(task_id)
     if not task:
         return redirect('/')
+
+    msg = f'<b>Deleted</b> task <em>{task.content}</em>'
     pos = task.pos
     task.deleted = True
     for oth in Task.query.filter(Task.pos > pos).all():
         oth.pos -= 1
     db.session.commit()
+
+    flash(Markup(msg))
+
     return HOME
 
 
@@ -93,11 +100,15 @@ def resolve_task(task_id):
     if not task:
         return redirect('/')
     if task.done:
+        update = 'todo'
         task.done = False
     else:
+        update = 'done'
         task.done = True
 
     db.session.commit()
+
+    flash(Markup(f'Marked task <em>{task.content}</em> as <b>{update}</b>'))
     return HOME
 
 def swap_pos(task, other):
@@ -115,6 +126,8 @@ def move_up(task_id):
                      .first())
     if oth:
         swap_pos(task, oth)
+        flash(Markup(f'Moved task <em>{task.content}</em> <b>up</b>'))
+
     return HOME
 
 @app.route('/down/<int:task_id>')
@@ -128,6 +141,8 @@ def move_down(task_id):
                      .first())
     if oth:
         swap_pos(task, oth)
+        flash(Markup(f'Moved task <em>{task.content}</em> <b>down</b>'))
+
     return HOME
 
 application = app
