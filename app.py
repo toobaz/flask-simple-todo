@@ -2,6 +2,7 @@ from flask import Flask, request, flash, Markup
 from flask import render_template
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 
 from datetime import datetime
 
@@ -37,9 +38,15 @@ db.create_all()
 @app.route('/')
 def tasks_list():
     tasks = (Task.query.filter_by(deleted=False)
-                            .order_by(Task.done, -Task.pos)
-                            .all())
-    return render_template('list.html', tasks=tasks)
+                       .order_by(Task.done, -Task.pos))
+    cond = (tasks.filter(Task.pos < 0)
+                 .filter_by(done=False)
+                 .order_by(Task.pos)).all()
+    if len(cond):
+        tasks = tasks.filter(or_((Task.pos > 0), Task.done))
+    else:
+        cond = False
+    return render_template('list.html', tasks=tasks.all(), cond=cond)
 
 
 @app.route('/task', methods=['POST'])
@@ -107,6 +114,9 @@ def resolve_task(task_id):
         update = 'done'
         task.done = True
 
+    if task.pos < 0:
+        task.pos = -task.pos
+
     db.session.commit()
 
     flash(Markup(f'Marked task <em>{task.content}</em> as <b>{update}</b>'))
@@ -143,6 +153,18 @@ def move_down(task_id):
     if oth:
         swap_pos(task, oth)
         flash(Markup(f'Moved task <em>{task.content}</em> <b>down</b>'))
+
+    return HOME
+
+@app.route('/condition/<int:task_id>')
+def condition(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return HOME
+
+    task.pos = -task.pos
+    db.session.commit()
+    flash(Markup(f'Changed <b>conditioned</b> state of task <em>{task.content}</em>'))
 
     return HOME
 

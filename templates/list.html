@@ -24,6 +24,9 @@
     <input type="submit" value="Add task"/>
 </form>
 
+<table>
+<tr>
+<td style="vertical-align:top">
 <ul>
 {% for task in tasks %}
     <li>
@@ -31,11 +34,37 @@
         <a href="done/{{ task.id }}">X</a>
         <a href="up/{{ task.id }}">↑</a>
         <a href="down/{{ task.id }}">↓</a>
+        <a href="condition/{{ task.id }}">→</a>
         <a href="edit/{{ task.id }}">✎</a>
     </li>
 {% endfor %}
 </ul>
 
+</td>
+
+{% if cond != False %}
+
+<td style="vertical-align:top">
+
+<ul>
+{% for task in cond %}
+    <li>
+        {{ loop.index0 + 1 }} - {{ task.content }} ({{ task.created.strftime('%d/%m/%Y %H:%M') }})
+        <a href="done/{{ task.id }}">X</a>
+        <a href="up/{{ task.id }}">↑</a>
+        <a href="down/{{ task.id }}">↓</a>
+        <a href="condition/{{ task.id }}">←</a>
+        <a href="edit/{{ task.id }}">✎</a>
+    </li>
+{% endfor %}
+</ul>
+
+</td>
+
+{% endif %}
+</tr>
+
+</table>
 
 </body>
 </html>
