@@ -4,15 +4,25 @@ from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 
+try:
+    from config import HOME_PATH, SECRET_KEY
+except NameError:
+    HOME_PATH = '/'
+
+try:
+    from config import SECRET_KEY
+except NameError:
+    SECRET_KEY = b'notsosecret'
+
 from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.secret_key = b'notsosecret'
+app.secret_key = SECRET_KEY
 db = SQLAlchemy(app)
 
-HOME = redirect('/')
+HOME = redirect(HOME_PATH)
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
