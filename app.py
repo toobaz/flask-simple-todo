@@ -206,5 +206,15 @@ def edited_task(task_id):
 
 application = app
 
+
+@app.template_filter('get_classes')
+def format_tags_filter(task):
+    classes = []
+    if task.done:
+        classes.append("done")
+    if task.content.startswith("{p}"):
+        classes.append("project")
+    return " ".join(classes)
+
 if __name__ == '__main__':
     app.run()
