@@ -6,12 +6,12 @@ from sqlalchemy import or_
 
 try:
     from config import HOME_PATH, SECRET_KEY
-except NameError:
+except (NameError, ModuleNotFoundError):
     HOME_PATH = '/'
 
 try:
     from config import SECRET_KEY
-except NameError:
+except (NameError, ModuleNotFoundError):
     SECRET_KEY = b'notsosecret'
 
 from datetime import datetime
