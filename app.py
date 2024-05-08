@@ -42,7 +42,8 @@ class Task(db.Model):
         return '<Content %s>' % self.content
 
 
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/')
