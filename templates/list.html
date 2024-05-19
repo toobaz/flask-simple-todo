@@ -25,6 +25,11 @@
 
 <form action="task" method="post">
     <p><input type="text" name="shift" size="3" value="1"/> - <input type="text" name="content"/></p>
+{% if done %}
+<div style="float: right;"><a href="../">Non-completed tasks</a></div>
+{% else %}
+<div style="float: right;"><a href="done">Completed tasks</a></div>
+{% endif %}
     <input type="submit" value="Add task"/>
 </form>
 

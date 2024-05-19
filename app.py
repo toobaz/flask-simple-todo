@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 
 try:
-    from config import HOME_PATH, SECRET_KEY
+    from config import HOME_PATH
 except (NameError, ModuleNotFoundError):
     HOME_PATH = '/'
 
@@ -48,7 +48,7 @@ with app.app_context():
 
 @app.route('/')
 def tasks_list():
-    tasks = (Task.query.filter_by(deleted=False)
+    tasks = (Task.query.filter_by(deleted=False, done=False)
                        .order_by(Task.done, -Task.pos))
     cond = (tasks.filter(Task.pos < 0)
                  .filter_by(done=False)
@@ -57,7 +57,22 @@ def tasks_list():
         tasks = tasks.filter(or_((Task.pos > 0), Task.done))
     else:
         cond = False
-    return render_template('list.html', tasks=tasks.all(), cond=cond)
+    return render_template('list.html', tasks=tasks.all(), cond=cond,
+                           done=False)
+
+@app.route('/done')
+def tasks_list_done():
+    tasks = (Task.query.filter_by(deleted=False, done=True)
+                       .order_by(Task.done, -Task.pos))
+    cond = (tasks.filter(Task.pos < 0)
+                 .filter_by(done=True)
+                 .order_by(Task.pos)).all()
+    if len(cond):
+        tasks = tasks.filter(or_((Task.pos > 0), Task.done))
+    else:
+        cond = False
+    return render_template('list.html', tasks=tasks.all(), cond=cond,
+                           done=True)
 
 
 @app.route('/task', methods=['POST'])
