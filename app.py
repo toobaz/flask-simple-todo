@@ -60,7 +60,7 @@ def tasks_list():
     return render_template('list.html', tasks=tasks.all(), cond=cond,
                            done=False)
 
-@app.route('/done')
+@app.route('/completed')
 def tasks_list_done():
     tasks = (Task.query.filter_by(deleted=False, done=True)
                        .order_by(Task.done, -Task.pos))
