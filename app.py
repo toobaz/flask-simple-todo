@@ -225,14 +225,24 @@ def edited_task(task_id):
 application = app
 
 
-@app.template_filter('get_classes')
+@app.template_filter('format_task')
 def format_tags_filter(task):
     classes = []
     if task.done:
         classes.append("done")
-    if task.content.startswith("{p}"):
-        classes.append("project")
-    return " ".join(classes)
+    text = task.content.strip()
+    while True:
+        if text.startswith('{'):
+            tag_end = task.content.find('}')
+            tag = text[1:tag_end]
+            classes.append(f"f-tag-{tag}")
+            text = text[tag_end+1:].strip()
+        else:
+            break
+    s_classes = " ".join(classes)
+    timestamp = task.created.strftime('%d/%m/%Y %H:%M')
+    return f'<span class="{s_classes}">{task.content.strip()} ({timestamp})</span> '
+
 
 if __name__ == '__main__':
     app.run()

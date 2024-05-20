@@ -6,7 +6,7 @@
 
 .done {text-decoration: line-through;}
 
-.project {background-color: orange;}
+{% include 'tags_format.css' %}
 </style>
 
 </head>
@@ -39,7 +39,7 @@
 <ul>
 {% for task in tasks %}
     <li>
-        <span class="{{task | get_classes}}">{{ loop.index0 + 1 }} - {{ task.content }} ({{ task.created.strftime('%d/%m/%Y %H:%M') }}) </span>
+        {{ loop.index0 + 1 }} - {{task | format_task | safe}}
         <a href="done/{{ task.id }}">X</a>
         <a href="up/{{ task.id }}">↑</a>
         <a href="down/{{ task.id }}">↓</a>
@@ -58,7 +58,7 @@
 <ul>
 {% for task in cond %}
     <li>
-        {{ loop.index0 + 1 }} - {{ task.content }} ({{ task.created.strftime('%d/%m/%Y %H:%M') }})
+        {{ loop.index0 + 1 }} - {{task | format_task | safe}}
         <a href="done/{{ task.id }}">X</a>
         <a href="up/{{ task.id }}">↑</a>
         <a href="down/{{ task.id }}">↓</a>
