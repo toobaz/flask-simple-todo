@@ -3,6 +3,9 @@ from flask import render_template
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
+import os
+import sys
+sys.path.append(os.path.dirname(__file__))
 
 try:
     from config import HOME_PATH
