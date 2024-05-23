@@ -234,6 +234,9 @@ def format_tags_filter(task):
     while True:
         if text.startswith('{'):
             tag_end = task.content.find('}')
+            if tag_end == -1:
+                # Not actually a tag
+                break
             tag = text[1:tag_end]
             classes.append(f"f-tag-{tag}")
             text = text[tag_end+1:].strip()
