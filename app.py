@@ -233,7 +233,7 @@ def format_tags_filter(task):
     text = task.content.strip()
     while True:
         if text.startswith('{'):
-            tag_end = task.content.find('}')
+            tag_end = text.find('}')
             if tag_end == -1:
                 # Not actually a tag
                 break
