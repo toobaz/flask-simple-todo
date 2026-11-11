@@ -1,8 +1,10 @@
-from flask import Flask, request, flash, Markup
+from flask import Flask, request, flash
+from markupsafe import Markup
 from flask import render_template
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_
+from sqlalchemy import or_, select
+from sqlalchemy.orm import aliased
 import os
 import sys
 sys.path.append(os.path.dirname(__file__))
@@ -90,11 +92,11 @@ def add_task():
     if shift == 0:
         task = Task(content, pos=len(Task.query.all())+1)
     else:
-        last_to_shift = (todo.limit(shift)
-                             # Required for a "limit" followed by a "order_by"
-                             .from_self()
-                             .order_by(Task.pos)
-                             .first())
+        subq = todo.limit(shift).subquery()
+        shifted_task = aliased(Task, subq)
+        last_to_shift = db.session.scalars(select(shifted_task)
+                                                    .order_by(shifted_task.pos)
+                                        ).first()
 
 
         to_shift = Task.query.filter(Task.pos >= last_to_shift.pos)
